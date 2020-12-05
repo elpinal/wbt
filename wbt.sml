@@ -1,7 +1,7 @@
 functor Wbt (X : sig
   type t
   val compare : t * t -> order
-end) : sig
+end) :> sig
   type set
 
   val empty : set
@@ -10,6 +10,7 @@ end) : sig
   val delete : X.t -> set -> set
 
   val size : set -> int
+  val member : X.t -> set -> bool
 
   exception Empty
   val min : set -> X.t (* Empty *)
@@ -30,6 +31,14 @@ end = struct
     | Bin of size * X.t * set * set
 
   val empty = Tip
+
+  fun member kx =
+    fn Tip => false
+     | Bin(_, ky, l, r) =>
+         case X.compare (kx, ky) of
+              LESS    => member kx l
+            | GREATER => member kx r
+            | EQUAL   => true
 
   exception Empty
 
