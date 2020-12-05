@@ -6,11 +6,16 @@ end) :> sig
 
   val empty : set
   val singleton : X.t -> set
+  val from_list : X.t list -> set
   val insert : X.t -> set -> set
   val delete : X.t -> set -> set
 
   val size : set -> int
   val member : X.t -> set -> bool
+
+  val fold : (X.t * 'a -> 'a) -> 'a -> set -> 'a
+  val to_asc_list : set -> X.t list
+  val to_desc_list : set -> X.t list
 
   exception Empty
   val min : set -> X.t (* Empty *)
@@ -133,4 +138,14 @@ end = struct
   and delete' Tip r = r
     | delete' l Tip = l
     | delete' l r = balanceR (min r) l (delete_min r)
+
+  fun fold f acc =
+    fn Tip             => acc
+     | Bin(_, k, l, r) => fold f (f (k, fold f acc l)) r
+
+  fun to_asc_list t = fold (fn (k, acc) => fn xs => acc (k :: xs)) (fn xs => xs) t []
+
+  fun to_desc_list t = fold (fn (k, acc) => k :: acc) [] t
+
+  fun from_list xs = foldl (fn (x, acc) => insert x acc) empty xs
 end
