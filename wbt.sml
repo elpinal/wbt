@@ -1,12 +1,22 @@
 functor Wbt (X : sig
   type t
   val compare : t * t -> order
-end) = struct
+end) : sig
+  type set
+
+  val empty : set
+  val singleton : X.t -> set
+  val insert : X.t -> set -> set
+
+  val size : set -> int
+end = struct
   type size = int
 
   datatype set
     = Tip
     | Bin of size * X.t * set * set
+
+  val empty = Tip
 
   val size =
     fn Tip      => 0
@@ -51,7 +61,12 @@ end) = struct
       else rotateL k l r
   end
 
+  structure R = struct
+    fun balanceR k l r = raise Fail "TODO"
+  end
+
   open L
+  open R
 
   fun insert kx =
     fn Tip => singleton kx
