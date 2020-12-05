@@ -7,8 +7,13 @@ end) : sig
   val empty : set
   val singleton : X.t -> set
   val insert : X.t -> set -> set
+  val delete : X.t -> set -> set
 
   val size : set -> int
+
+  exception Empty
+  val min : set -> X.t (* Empty *)
+  val delete_min : set -> set (* Empty *)
 end = struct
   type size = int
 
@@ -17,6 +22,11 @@ end = struct
     | Bin of size * X.t * set * set
 
   val empty = Tip
+
+  exception Empty
+
+  fun min Tip = raise Empty
+    | min (Bin node) = min (#3 node) handle Empty => #2 node
 
   val size =
     fn Tip      => 0
@@ -90,4 +100,20 @@ end = struct
               LESS    => balanceR ky (insert kx l) r
             | GREATER => balanceL ky l (insert kx r)
             | EQUAL   => Bin(s, kx, l, r)
+
+  val rec delete_min =
+    fn Tip             => raise Empty
+     | Bin(_, k, l, r) => balanceL k (delete_min l) r handle Empty => r
+
+  fun delete kx =
+    fn Tip => Tip
+     | Bin(s, ky, l, r) =>
+         case X.compare (kx, ky) of
+              LESS    => balanceL ky (delete kx l) r
+            | GREATER => balanceR ky l (delete kx r)
+            | EQUAL   => delete' l r
+
+  and delete' Tip r = r
+    | delete' l Tip = l
+    | delete' l r = balanceR (min r) l (delete_min r)
 end
