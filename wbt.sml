@@ -18,14 +18,6 @@ signature SET = sig
   exception Empty
   val min : set -> elem (* Empty *)
   val delete_min : set -> set (* Empty *)
-
-
-  (* wanted for maps *) (*
-  val union : 'a t -> 'a t -> 'a t
-  val disjoint_union : 'a t -> 'a t -> 'a t
-  val fold_eq : ('a * 'b * 'c -> 'c) -> 'c -> 'a t -> 'b t -> 'c
-  val intersection : ('a * 'b -> 'c) -> 'a t -> 'b t -> 'c t
-  *)
 end
 
 functor Wbt (X : sig

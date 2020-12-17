@@ -21,7 +21,7 @@ signature MAP = sig
   val delete_min : 'a t -> 'a t (* Empty *)
 
 
-  (* wanted for maps *) (*
+  (* wanted *) (*
   val union : 'a t -> 'a t -> 'a t
   val disjoint_union : 'a t -> 'a t -> 'a t
   val fold_eq : ('a * 'b * 'c -> 'c) -> 'c -> 'a t -> 'b t -> 'c
