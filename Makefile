@@ -5,6 +5,6 @@ mlkit:
 	mlkit wbt.mlb
 
 mlton:
-	mlton wbt.mlb
+	mlton -default-ann 'warnUnused true' wbt.mlb
 
 .PHONY: poly mlkit mlton

@@ -98,13 +98,13 @@ end) :> SET where type elem = X.t = struct
   end
 
   structure R = struct
-    fun singleR k1 Tip _ = raise Fail "singleR"
+    fun singleR _ Tip _ = raise Fail "singleR"
       | singleR k1 (Bin node) t1 = bin (#2 node) (#3 node) (bin k1 (#4 node) t1)
 
     fun doubleR k1 (Bin(_, k2, t4, Bin node)) t1 = bin (#2 node) (bin k2 t4 (#3 node)) (bin k1 (#4 node) t1)
       | doubleR _ _ _ = raise Fail "doubleR"
 
-    fun rotateR k Tip _ = raise Fail "rotateR"
+    fun rotateR _ Tip _ = raise Fail "rotateR"
       | rotateR k (Bin node) r =
            if isSingle (#4 node) (#3 node)
            then singleR k (Bin node) r
@@ -133,7 +133,7 @@ end) :> SET where type elem = X.t = struct
 
   fun delete kx =
     fn Tip => Tip
-     | Bin(s, ky, l, r) =>
+     | Bin(_, ky, l, r) =>
          case X.compare (kx, ky) of
               LESS    => balanceL ky (delete kx l) r
             | GREATER => balanceR ky l (delete kx r)
