@@ -20,7 +20,7 @@ signature SET = sig
   val delete_min : set -> set (* Empty *)
 end
 
-functor Wbt (X : sig
+functor Set (X : sig
   type t
   val compare : t * t -> order
 end) :> SET where type elem = X.t = struct

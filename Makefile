@@ -1,5 +1,6 @@
 poly:
-	poly --script wbt.sml
+	poly --script set.sml
+	poly --script map.sml
 
 mlkit:
 	mlkit wbt.mlb
