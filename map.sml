@@ -17,6 +17,9 @@ signature MAP = sig
   val app : ('a -> unit) -> 'a t -> unit
   val app_with_key : (key * 'a -> unit) -> 'a t -> unit
 
+  exception Absent
+  val adjust : key -> ('a -> 'a) -> 'a t -> 'a t (* Absent *)
+
   val fold : (key * 'a * 'b -> 'b) -> 'b -> 'a t -> 'b
   val to_asc_list : 'a t -> (key * 'a) list
   val to_desc_list : 'a t -> (key * 'a) list
@@ -45,6 +48,9 @@ end) :> MAP where type key = X.t = struct
     = Tip
     | Bin of size * key * 'a t * 'a t * 'a
 
+  exception Absent
+  exception Empty
+
   val empty = Tip
 
   fun member kx =
@@ -62,8 +68,6 @@ end) :> MAP where type key = X.t = struct
               LESS    => lookup kx l
             | GREATER => lookup kx r
             | EQUAL   => SOME v
-
-  exception Empty
 
   fun min Tip = raise Empty
     | min (Bin node) = min (#3 node) handle Empty => (#2 node, #5 node)
@@ -192,4 +196,12 @@ end) :> MAP where type key = X.t = struct
          end
 
   fun app f = app_with_key (fn (_, v) => f v)
+
+  fun adjust kx f =
+    fn Tip => raise Absent
+     | Bin(s, ky, l, r, v) =>
+         case X.compare (kx, ky) of
+              LESS    => Bin(s, ky, adjust kx f l, r, v)
+            | GREATER => Bin(s, ky, l, adjust kx f r, v)
+            | EQUAL   => Bin(s, ky, l, r, f v)
 end
