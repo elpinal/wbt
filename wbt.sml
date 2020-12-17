@@ -1,24 +1,22 @@
-functor Wbt (X : sig
-  type t
-  val compare : t * t -> order
-end) :> sig
+signature SET = sig
   type set
+  type elem
 
   val empty : set
-  val singleton : X.t -> set
-  val from_list : X.t list -> set
-  val insert : X.t -> set -> set
-  val delete : X.t -> set -> set
+  val singleton : elem -> set
+  val from_list : elem list -> set
+  val insert : elem -> set -> set
+  val delete : elem -> set -> set
 
   val size : set -> int
-  val member : X.t -> set -> bool
+  val member : elem -> set -> bool
 
-  val fold : (X.t * 'a -> 'a) -> 'a -> set -> 'a
-  val to_asc_list : set -> X.t list
-  val to_desc_list : set -> X.t list
+  val fold : (elem * 'a -> 'a) -> 'a -> set -> 'a
+  val to_asc_list : set -> elem list
+  val to_desc_list : set -> elem list
 
   exception Empty
-  val min : set -> X.t (* Empty *)
+  val min : set -> elem (* Empty *)
   val delete_min : set -> set (* Empty *)
 
 
@@ -28,12 +26,18 @@ end) :> sig
   val fold_eq : ('a * 'b * 'c -> 'c) -> 'c -> 'a t -> 'b t -> 'c
   val intersection : ('a * 'b -> 'c) -> 'a t -> 'b t -> 'c t
   *)
-end = struct
+end
+
+functor Wbt (X : sig
+  type t
+  val compare : t * t -> order
+end) :> SET where type elem = X.t = struct
   type size = int
+  type elem = X.t
 
   datatype set
     = Tip
-    | Bin of size * X.t * set * set
+    | Bin of size * elem * set * set
 
   val empty = Tip
 
