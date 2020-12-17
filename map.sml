@@ -12,6 +12,11 @@ signature MAP = sig
   val member : key -> 'a t -> bool
   val lookup : key -> 'a t -> 'a option
 
+  val map : ('a -> 'b) -> 'a t -> 'b t
+  val map_with_key : (key * 'a -> 'b) -> 'a t -> 'b t
+  val app : ('a -> unit) -> 'a t -> unit
+  val app_with_key : (key * 'a -> unit) -> 'a t -> unit
+
   val fold : (key * 'a * 'b -> 'b) -> 'b -> 'a t -> 'b
   val to_asc_list : 'a t -> (key * 'a) list
   val to_desc_list : 'a t -> (key * 'a) list
@@ -161,4 +166,30 @@ end) :> MAP where type key = X.t = struct
   fun to_desc_list t = fold (fn (k, v, acc) => (k, v) :: acc) [] t
 
   fun from_list xs = foldl (fn ((k, v), acc) => insert k v acc) empty xs
+
+  fun map_with_key f =
+    fn Tip => Tip
+     | Bin(s, k, l, r, v) =>
+         let
+           val l = map_with_key f l
+           val v = f (k, v)
+           val r = map_with_key f r
+         in
+           Bin(s, k, l, r, v)
+         end
+
+  fun map f = map_with_key (fn (_, v) => f v)
+
+  fun app_with_key f =
+    fn Tip => ()
+     | Bin(_, k, l, r, v) =>
+         let
+           val () = app_with_key f l
+           val () = f (k, v)
+           val () = app_with_key f r
+         in
+           ()
+         end
+
+  fun app f = app_with_key (fn (_, v) => f v)
 end
