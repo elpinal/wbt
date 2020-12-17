@@ -1,23 +1,23 @@
 signature SET = sig
-  type set
+  type t
   type elem
 
-  val empty : set
-  val singleton : elem -> set
-  val from_list : elem list -> set
-  val insert : elem -> set -> set
-  val delete : elem -> set -> set
+  val empty : t
+  val singleton : elem -> t
+  val from_list : elem list -> t
+  val insert : elem -> t -> t
+  val delete : elem -> t -> t
 
-  val size : set -> int
-  val member : elem -> set -> bool
+  val size : t -> int
+  val member : elem -> t -> bool
 
-  val fold : (elem * 'a -> 'a) -> 'a -> set -> 'a
-  val to_asc_list : set -> elem list
-  val to_desc_list : set -> elem list
+  val fold : (elem * 'a -> 'a) -> 'a -> t -> 'a
+  val to_asc_list : t -> elem list
+  val to_desc_list : t -> elem list
 
   exception Empty
-  val min : set -> elem (* Empty *)
-  val delete_min : set -> set (* Empty *)
+  val min : t -> elem (* Empty *)
+  val delete_min : t -> t (* Empty *)
 end
 
 functor Set (X : sig
@@ -27,9 +27,9 @@ end) :> SET where type elem = X.t = struct
   type size = int
   type elem = X.t
 
-  datatype set
+  datatype t
     = Tip
-    | Bin of size * elem * set * set
+    | Bin of size * elem * t * t
 
   val empty = Tip
 
