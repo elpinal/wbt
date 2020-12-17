@@ -2,4 +2,5 @@ local
   $(SML_LIB)/basis/basis.mlb
 in
   wbt.sml
+  map.sml
 end
