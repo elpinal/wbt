@@ -7,6 +7,7 @@ Weight-balanced trees in Standard ML.
 - Poly/ML
 - MLKit
 - MLton
+- Moscow ML
 
 ## Reference
 

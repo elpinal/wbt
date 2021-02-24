@@ -8,4 +8,7 @@ mlkit:
 mlton:
 	mlton -default-ann 'warnUnused true' wbt.mlb
 
-.PHONY: poly mlkit mlton
+mosml:
+	mosmlc -c -toplevel set.sml map.sml
+
+.PHONY: poly mlkit mlton mosml
